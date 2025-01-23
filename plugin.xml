@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-deeplinks" version="1.0.0">
+    <name>DeeplinksPlugin</name>
+    <description>Plugin to handle Android deeplinks</description>
+    <license>MIT</license>
+    <keywords>cordova, deeplinks</keywords>
+    <engines>
+        <engine name="cordova-android" version=">=7.0.0"/>
+    </engines>
+    <platform name="android">
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <activity android:name="DeepLinksActivity" android:exported="true" android:launchMode="singleTask">
+                <intent-filter android:autoVerify="true">
+                    <action android:name="android.intent.action.VIEW"/>
+                    <category android:name="android.intent.category.DEFAULT"/>
+                    <category android:name="android.intent.category.BROWSABLE"/>
+                    <data android:scheme="https" android:host="outsystemsdevdmz.corporativo.pt" android:pathPrefix="/OSTESTAPP/Deeplinks"/>
+                </intent-filter>
+            </activity>
+        </config-file>
+        <source-file src="src/android/DeepLinksActivity.java" target-dir="app/src/main/OSTESTAPP"/>
+    </platform>
+</plugin>
