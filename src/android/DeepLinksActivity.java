@@ -1,34 +1,44 @@
-package pt.nos.osatmospheretest;
+package pt.nos.deeplinks;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import org.apache.cordova.CallbackContext;
-import org.json.JSONObject;
+import org.apache.cordova.*;
 
-public class DeepLinksActivity extends Activity {
+public class DeeplinkHandler extends CordovaPlugin {
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        handleDeepLink(getIntent());
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleDeepLink(intent);
-    }
-
-    private void handleDeepLink(Intent intent) {
-        Uri data = intent.getData();
-        if (data != null) {
-            String url = data.toString();
-            Intent mainIntent = new Intent(this, MainActivity.class);
-            mainIntent.putExtra("deeplink", url);
-            mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(mainIntent);
+    public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) {
+        if ("openDeeplink".equals(action)) {
+            Intent intent = cordova.getActivity().getIntent();
+            handleDeepLink(intent, callbackContext);
+            return true;
         }
-        finish();
+        return false;
+    }
+
+    private void handleDeepLink(Intent intent, CallbackContext callbackContext) {
+        if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Uri uri = intent.getData();
+            if (uri != null) {
+                callbackContext.success(uri.toString());
+            } else {
+                callbackContext.error("No deep link found");
+            }
+        } else {
+            callbackContext.error("Intent action is not VIEW");
+        }
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleDeepLink(intent, null);
     }
 }
