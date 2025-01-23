@@ -18,6 +18,6 @@
                 </intent-filter>
             </activity>
         </config-file>
-        <source-file src="src/android/DeepLinksActivity.java" target-dir="app/src/main/OSTESTAPP"/>
+        <source-file src="src/android/DeepLinksActivity.java" target-dir="app/src/main/Deeplinks"/>
     </platform>
 </plugin>
