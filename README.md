@@ -30,7 +30,7 @@ To enable Android App Links, host an `assetlinks.json` file on your server at:
 https://<your-domain>/.well-known/assetlinks.json
 ```
 
-Example `assetlinks.json` file with sensitive values hidden:
+Example `assetlinks.json` file:
 ```json
 [
   {
