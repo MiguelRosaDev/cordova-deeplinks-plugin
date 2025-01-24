@@ -3,48 +3,37 @@ package com.example;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import org.apache.cordova.CordovaActivity;
-import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CallbackContext;
+import org.json.JSONArray;
+import org.json.JSONException;
 
-public class DeepLinksActivity extends CordovaActivity {
-
-    private CordovaWebView appView; // Cordova WebView instance
+public class DeepLinksActivity extends CordovaPlugin {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Load the initial Cordova URL
-        loadUrl(launchUrl);
-
-        // Initialize the WebView if needed
-        if (appView == null) {
-            appView = this.appView;
-        }
-
-        // Handle incoming intent for deep links
-        handleDeepLink(getIntent());
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleDeepLink(intent);
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-
-        // Handle the new deep link
-        handleDeepLink(intent);
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        if (action.equals("handleDeepLink")) {
+            handleDeepLink(cordova.getActivity().getIntent());
+            callbackContext.success();
+            return true;
+        }
+        return false;
     }
 
     private void handleDeepLink(Intent intent) {
         if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
             if (uri != null) {
-                if (appView != null) {
-                    appView.loadUrl("javascript:handleDeepLink('" + uri.toString() + "');");
-                } else {
-                    System.err.println("AppView is not initialized, cannot handle deep link.");
-                }
+                String uriString = uri.toString();
+                webView.loadUrl("javascript:handleDeepLink('" + uriString + "');");
             }
         }
     }
 }
+
