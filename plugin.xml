@@ -16,14 +16,14 @@
         </config-file>
         
         <config-file target="AndroidManifest.xml" parent="/*">
-            <activity android:name="DeepLinksActivity" android:exported="true" android:launchMode="singleTask">
+            <receiver android:name="DeepLinksActivity" android:exported="true" android:launchMode="singleTask">
                 <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW"/>
                     <category android:name="android.intent.category.DEFAULT"/>
                     <category android:name="android.intent.category.BROWSABLE"/>
                     <data android:scheme="https" android:host="outsystemsdevdmz.corporativo.pt" android:pathPrefix="/OSTESTAPP/"/>
                 </intent-filter>
-            </activity>
+            </receiver>
         </config-file>
         <source-file src="src/android/DeepLinksActivity.java" target-dir="app/src/main/Deeplinks"/>
     </platform>
