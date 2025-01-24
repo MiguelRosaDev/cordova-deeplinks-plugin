@@ -1,4 +1,4 @@
-package com.example;
+package com.deeplink;
 
 import android.content.Intent;
 import android.net.Uri;
