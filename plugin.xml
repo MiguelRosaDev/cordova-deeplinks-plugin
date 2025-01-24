@@ -9,22 +9,24 @@
     </engines>
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="DeepLinksActivity">
-                <param name="android-package" value="com.example.DeepLinksActivity" />
+            <feature name="DeeplinksPlugin">
+                <param name="android-package" value="com.example.DeeplinksPlugin" />
                 <param name="onload" value="true" />
             </feature>
         </config-file>
         
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:name="DeepLinksActivity" android:exported="true" android:launchMode="singleTask">
+            <activity android:name="com.example.DeepLinksActivity"
+                      android:exported="true"
+                      android:launchMode="singleTask">
                 <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW"/>
                     <category android:name="android.intent.category.DEFAULT"/>
                     <category android:name="android.intent.category.BROWSABLE"/>
                     <data android:scheme="https" android:host="outsystemsdevdmz.corporativo.pt" android:pathPrefix="/OSTESTAPP/"/>
                 </intent-filter>
-            </receiver>
+            </activity>
         </config-file>
-        <source-file src="src/android/DeepLinksActivity.java" target-dir="app/src/main/Deeplinks"/>
+        <source-file src="src/android/DeepLinksActivity.java" target-dir="src/com/example/" />
     </platform>
 </plugin>
