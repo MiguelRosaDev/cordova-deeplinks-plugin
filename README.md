@@ -36,8 +36,8 @@ Example `assetlinks.json` file with sensitive values hidden:
   {
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
-      "namespace": "OSTESTAPP",
-      "package_name": "pt.nos.osatmospheretest",
+      "namespace": "You app namespace",
+      "package_name": "your app package name",
       "sha256_cert_fingerprints": [
         "<your-certificate-sha256-fingerprint>"
       ]
@@ -92,101 +92,6 @@ document.addEventListener('deviceready', function () {
     }
 });
 ```
-
-### 2. **Testing the Plugin**
-
-To test deep linking, use the following command with `adb`:
-
-```bash
-adb shell am start -a android.intent.action.VIEW -d "https://outsystemsdevdmz.corporativo.pt/OSTESTAPP/Deeplinks" pt.nos.osatmospheretest
-```
-
----
-
-## Plugin XML
-
-Here’s the `plugin.xml` configuration for your plugin:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-deeplinks" version="1.0.0">
-    <name>DeeplinksPlugin</name>
-    <description>Plugin to handle Android deeplinks</description>
-    <license>MIT</license>
-    <keywords>cordova, deeplinks</keywords>
-    <engines>
-        <engine name="cordova-android" version=">=7.0.0"/>
-    </engines>
-    <platform name="android">
-        <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="DeeplinksPlugin">
-                <param name="android-package" value="com.example.DeeplinksPlugin" />
-                <param name="onload" value="true" />
-            </feature>
-        </config-file>
-        
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:name="com.example.DeepLinksActivity"
-                      android:exported="true"
-                      android:launchMode="singleTask">
-                <intent-filter android:autoVerify="true">
-                    <action android:name="android.intent.action.VIEW"/>
-                    <category android:name="android.intent.category.DEFAULT"/>
-                    <category android:name="android.intent.category.BROWSABLE"/>
-                    <data android:scheme="https" android:host="outsystemsdevdmz.corporativo.pt" android:pathPrefix="/OSTESTAPP/"/>
-                </intent-filter>
-            </activity>
-        </config-file>
-        <source-file src="src/android/DeepLinksActivity.java" target-dir="src/com/example/" />
-    </platform>
-</plugin>
-```
-
----
-
-## Java Implementation
-
-### 1. **DeepLinksActivity.java**
-
-Ensure your `DeepLinksActivity` handles incoming deep links and passes them to JavaScript.
-
-```java
-package com.example;
-
-import android.content.Intent;
-import android.net.Uri;
-import org.apache.cordova.*;
-
-public class DeepLinksActivity extends CordovaActivity {
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        loadUrl(launchUrl);
-
-        // Handle the intent if it contains a deep link
-        handleDeepLink(getIntent());
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        handleDeepLink(intent);
-    }
-
-    private void handleDeepLink(Intent intent) {
-        if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
-            Uri uri = intent.getData();
-            if (uri != null) {
-                // Pass the deep link URL to your JavaScript logic
-                webView.loadUrl("javascript:handleDeepLink('" + uri.toString() + "');");
-            }
-        }
-    }
-}
-```
-
 ---
 
 ## License
