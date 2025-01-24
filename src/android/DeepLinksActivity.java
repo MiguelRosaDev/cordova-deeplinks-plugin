@@ -1,44 +1,34 @@
-package com.example.DeepLinksActivity;
+package com.example;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import org.apache.cordova.*;
 
-public class DeeplinkHandler extends CordovaPlugin {
+public class DeepLinksActivity extends CordovaActivity {
 
     @Override
-    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-        super.initialize(cordova, webView);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        loadUrl(launchUrl);
+
+        // Handle the intent if it contains a deep link
+        handleDeepLink(getIntent());
     }
 
     @Override
-    public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) {
-        if ("openDeeplink".equals(action)) {
-            Intent intent = cordova.getActivity().getIntent();
-            handleDeepLink(intent, callbackContext);
-            return true;
-        }
-        return false;
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleDeepLink(intent);
     }
 
-    private void handleDeepLink(Intent intent, CallbackContext callbackContext) {
+    private void handleDeepLink(Intent intent) {
         if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
             if (uri != null) {
-                callbackContext.success(uri.toString());
-            } else {
-                callbackContext.error("No deep link found");
+                // Pass the deep link URL to your JavaScript logic
+                webView.loadUrl("javascript:handleDeepLink('" + uri.toString() + "');");
             }
-        } else {
-            callbackContext.error("Intent action is not VIEW");
         }
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleDeepLink(intent, null);
     }
 }
