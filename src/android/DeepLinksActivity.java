@@ -1,13 +1,14 @@
-package com.deeplink;
+package com.example;
 
 import android.content.Intent;
 import android.net.Uri;
-import org.apache.cordova.*;
+import android.os.Bundle;
+import org.apache.cordova.CordovaActivity;
 
 public class DeepLinksActivity extends CordovaActivity {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) { // Bundle is now imported
         super.onCreate(savedInstanceState);
         loadUrl(launchUrl);
 
@@ -26,8 +27,11 @@ public class DeepLinksActivity extends CordovaActivity {
         if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
             if (uri != null) {
-                // Pass the deep link URL to your JavaScript logic
-                webView.loadUrl("javascript:handleDeepLink('" + uri.toString() + "');");
+                if (appView != null) { // Ensure appView is initialized
+                    appView.loadUrl("javascript:handleDeepLink('" + uri.toString() + "');");
+                } else {
+                    System.err.println("AppView is not initialized, cannot handle deep link.");
+                }
             }
         }
     }
