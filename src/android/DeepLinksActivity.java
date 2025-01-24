@@ -1,30 +1,28 @@
-package com.deeplink;
+package com.example;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import org.apache.cordova.CordovaActivity;
 import org.apache.cordova.CordovaWebView;
-import org.apache.cordova.CordovaPreferences;
 
 public class DeepLinksActivity extends CordovaActivity {
 
-    private CordovaWebView appView;
+    private CordovaWebView appView; // Cordova WebView instance
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize Cordova WebView
-        if (appView == null) {
-            appView = makeWebView();
-            init(appView, this, makePreferences());
-        }
-
-        // Load initial Cordova page
+        // Load the initial Cordova URL
         loadUrl(launchUrl);
 
-        // Handle incoming deep links
+        // Initialize the WebView if needed
+        if (appView == null) {
+            appView = this.appView;
+        }
+
+        // Handle incoming intent for deep links
         handleDeepLink(getIntent());
     }
 
@@ -32,6 +30,8 @@ public class DeepLinksActivity extends CordovaActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+
+        // Handle the new deep link
         handleDeepLink(intent);
     }
 
