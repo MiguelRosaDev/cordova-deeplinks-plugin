@@ -7,6 +7,10 @@
     <engines>
         <engine name="cordova-android" version=">=7.0.0"/>
     </engines>
+
+    <preference name="APP_DOMAIN_HOST" default="/" />
+    <preference name="APP_DOMAIN_PATH" default="/" />
+    
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="DeeplinksPlugin">
@@ -15,7 +19,7 @@
             </feature>
         </config-file>
         
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
             <activity android:name="com.deeplink.DeepLinksActivity"
                       android:exported="true"
                       android:launchMode="singleTask">
@@ -23,7 +27,7 @@
                     <action android:name="android.intent.action.VIEW"/>
                     <category android:name="android.intent.category.DEFAULT"/>
                     <category android:name="android.intent.category.BROWSABLE"/>
-                    <data android:scheme="https" android:host="outsystemsdevdmz.corporativo.pt" android:pathPrefix="/OSTESTAPP/"/>
+                    <data android:scheme="https" android:host="$APP_DOMAIN_HOST" android:pathPrefix="$APP_DOMAIN_PATH"/>
                 </intent-filter>
             </activity>
         </config-file>
