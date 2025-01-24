@@ -34,5 +34,10 @@
             <meta-data android:name="asset_statements" android:resource="@string/asset_statements" />
         </config-file>
         <source-file src="src/android/DeepLinksActivity.java" target-dir="src/com/example/" />
+        
+        <config-file target="res/values/strings.xml" parent="/*">
+            <string name="asset_statements">[{\"include\": \"https://outsystemsdevdmz.corporativo.pt/OSTESTAPP/.well-known/assetlinks.json\"}]</string>
+        </config-file>
     </platform>
 </plugin>
+
