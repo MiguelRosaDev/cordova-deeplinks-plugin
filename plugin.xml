@@ -21,7 +21,7 @@
         </config-file>
         
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:name="com.deeplink.DeepLinksActivity"
+            <activity android:name="com.example.DeepLinksActivity"
                       android:exported="true"
                       android:launchMode="singleTask">
                 <intent-filter android:autoVerify="true">
@@ -31,8 +31,8 @@
                     <data android:scheme="https" android:host="$APP_DOMAIN_HOST" android:pathPrefix="$APP_DOMAIN_PATH"/>
                 </intent-filter>
             </activity>
+            <meta-data android:name="asset_statements" android:resource="@string/asset_statements" />
         </config-file>
         <source-file src="src/android/DeepLinksActivity.java" target-dir="src/com/example/" />
     </platform>
 </plugin>
-
