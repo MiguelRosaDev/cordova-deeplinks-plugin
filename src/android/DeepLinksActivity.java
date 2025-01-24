@@ -1,4 +1,4 @@
-package com.example;
+package pt.nos.osatmospheretest;
 
 import android.content.Intent;
 import android.net.Uri;
