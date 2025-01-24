@@ -8,6 +8,13 @@
         <engine name="cordova-android" version=">=7.0.0"/>
     </engines>
     <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="DeepLinksActivity">
+                <param name="android-package" value="com.example.DeepLinksActivity" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+        
         <config-file target="AndroidManifest.xml" parent="/*">
             <activity android:name="DeepLinksActivity" android:exported="true" android:launchMode="singleTask">
                 <intent-filter android:autoVerify="true">
