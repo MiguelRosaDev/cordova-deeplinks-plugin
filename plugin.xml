@@ -15,7 +15,7 @@
             </feature>
         </config-file>
         
-        <config-file target="AndroidManifest.xml" parent="/*">
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver android:name="DeepLinksActivity" android:exported="true" android:launchMode="singleTask">
                 <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW"/>
