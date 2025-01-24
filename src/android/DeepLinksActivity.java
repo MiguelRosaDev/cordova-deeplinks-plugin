@@ -1,4 +1,4 @@
-package pt.nos.deeplinks;
+package com.example.DeepLinksActivity;
 
 import android.app.Activity;
 import android.content.Intent;
