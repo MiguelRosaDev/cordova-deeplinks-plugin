@@ -10,6 +10,7 @@
 
     <preference name="APP_DOMAIN_HOST" default="/" />
     <preference name="APP_DOMAIN_PATH" default="/" />
+    <preference name="ASSET_LINKS_PATH" default="/.well-known/assetlinks.json" />
     
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
