@@ -12,13 +12,13 @@ import org.json.JSONException;
 
 public class DeepLinksActivity extends CordovaPlugin {
     private static final String TAG = "DeepLinksActivity";
-    private String assetLinksPath;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        this.assetLinksPath = preferences.getString("ASSET_LINKS_PATH", "/OSTESTAPP/.well-known/assetlinks.json");
-        Log.d(TAG, "DeepLinksActivity initialized with assetLinksPath: " + this.assetLinksPath);
+        String assetLinksJson = preferences.getString("ASSET_LINKS_JSON", "[]");
+        Log.d(TAG, "DeepLinksActivity initialized with assetLinksJson: " + assetLinksJson);
+        this.assetLinksPath = assetLinksJson;
     }
 
     @Override
