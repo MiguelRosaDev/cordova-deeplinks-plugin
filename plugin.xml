@@ -10,7 +10,7 @@
 
     <preference name="APP_DOMAIN_HOST" default="nostestapp.page.link" />
     <preference name="APP_DOMAIN_PATH" default="/OSTESTAPP/" />
-    <preference name="ASSET_LINKS_PATH" default="" />
+    <preference name="ASSET_LINKS_JSON" default="" />
     
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
@@ -33,10 +33,6 @@
                           android:pathPrefix="$APP_DOMAIN_PATH"/>
                 </intent-filter>
             </activity>
-        </config-file>
-
-        <config-file target="res/values/strings.xml" parent="/*">
-            <string name="asset_statements">[{\"include\":\"https://$ASSET_LINKS_PATH\"}]</string>
         </config-file>
         
         <source-file src="src/android/DeepLinksActivity.java" target-dir="src/pt/nos/osatmospheretest" />
