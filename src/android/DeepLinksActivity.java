@@ -12,6 +12,7 @@ import org.json.JSONException;
 
 public class DeepLinksActivity extends CordovaPlugin {
     private static final String TAG = "DeepLinksActivity";
+    private String assetLinksPath;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
