@@ -1,4 +1,4 @@
-package pt.nos.osatmospheretest;
+package com.example.DeepLinksActivity;
 
 import android.content.Intent;
 import android.net.Uri;
