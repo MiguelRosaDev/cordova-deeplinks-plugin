@@ -12,11 +12,13 @@ import org.json.JSONException;
 
 public class DeepLinksActivity extends CordovaPlugin {
     private static final String TAG = "DeepLinksActivity";
+    private String assetLinksPath;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        Log.d(TAG, "DeepLinksActivity initialized");
+        this.assetLinksPath = preferences.getString("ASSET_LINKS_PATH", "/OSTESTAPP/.well-known/assetlinks.json");
+        Log.d(TAG, "DeepLinksActivity initialized with assetLinksPath: " + this.assetLinksPath);
     }
 
     @Override
@@ -37,15 +39,21 @@ public class DeepLinksActivity extends CordovaPlugin {
             if (uri != null) {
                 String uriString = uri.toString();
                 Log.d(TAG, "Deep link URI: " + uriString);
-                callbackContext.success(uriString);
-                webView.loadUrl("javascript:handleDeepLink('" + uriString + "');");
+                if (callbackContext != null) {
+                    callbackContext.success(uriString);
+                }
+                webView.loadUrl("javascript:window.handleDeepLink('" + uriString + "');");
             } else {
                 Log.d(TAG, "Deep link URI is null");
-                callbackContext.error("Deep link URI is null");
+                if (callbackContext != null) {
+                    callbackContext.error("Deep link URI is null");
+                }
             }
         } else {
             Log.d(TAG, "Not a VIEW intent");
-            callbackContext.error("Not a VIEW intent");
+            if (callbackContext != null) {
+                callbackContext.error("Not a VIEW intent");
+            }
         }
     }
 
