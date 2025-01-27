@@ -13,7 +13,7 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <preference name="APP_DOMAIN_HOST" value="outsystemsdevdmz.corporativo.pt" />
+        <preference name="APP_DOMAIN_HOST" value="nostestapp.page.link" />
         <preference name="APP_DOMAIN_PATH" value="/OSTESTAPP/" />
         <preference name="ASSET_LINKS_PATH" value="/OSTESTAPP/.well-known/assetlinks.json" />
     </platform>
