@@ -1,17 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns     = "http://www.w3.org/ns/widgets"
-        xmlns:cdv = "http://cordova.apache.org/ns/1.0"
-        id        = "com.example.app"
-        version   = "1.0.0">
-    <name>My App</name>
-    <description>
-        A sample Apache Cordova application that responds to the deviceready event.
-    </description>
-    <author email="dev@example.com" href="http://example.com">
-        Apache Cordova Team
-    </author>
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="pt.nos.osatmospheretest" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>YourAppName</name>
+    <description>Your app description</description>
+    <author email="dev@cordova.apache.org" href="http://cordova.io">Your Name</author>
     <content src="index.html" />
-    <plugin name="cordova-plugin-whitelist" spec="1.3.4" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -21,12 +13,10 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <plugin name="cordova-plugin-deeplinks" spec="file:path/to/your/plugin" />
+        <preference name="APP_DOMAIN_HOST" value="outsystemsdevdmz.corporativo.pt" />
+        <preference name="APP_DOMAIN_PATH" value="/OSTESTAPP/" />
+        <preference name="ASSET_LINKS_PATH" value="/OSTESTAPP/.well-known/assetlinks.json" />
     </platform>
-    <platform name="ios">
-        <allow-intent href="itms:*" />
-        <allow-intent href="itms-apps:*" />
-    </platform>
-    <engine name="android" spec="~8.1.0" />
+    <plugin name="cordova-plugin-deeplinks" spec="https://github.com/MiguelRosaDev/cordova-deeplinks-plugin" />
 </widget>
 
