@@ -1,25 +1,25 @@
-package pt.nos.osatmospheretest;
-
+import android.os.Bundle;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+
 import org.apache.cordova.CordovaActivity;
-import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
+import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class DeepLinksActivity extends CordovaActivity { 
+public class DeepLinksActivity extends CordovaActivity { // Mudança para CordovaActivity
     private static final String TAG = "DeepLinksActivity";
     private static String lastDeepLink = null;
     private static CallbackContext persistentCallback = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        handleDeepLink(getIntent()); 
+        super.onCreate(savedInstanceState); // Chamando o método da superclasse
+        handleDeepLink(getIntent()); // Chama a função para verificar o Deep Link logo ao abrir
     }
-
+    
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("getDeepLink")) {
