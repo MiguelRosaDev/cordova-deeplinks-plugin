@@ -8,9 +8,8 @@
         <engine name="cordova-android" version=">=7.0.0"/>
     </engines>
 
-    <preference name="APP_DOMAIN_HOST" default="nostestapp.page.link" />
-    <preference name="APP_DOMAIN_PATH" default="/OSTESTAPP/" />
-    <preference name="ASSET_LINKS_JSON" default="" />
+    <preference name="APP_SCHEME" default=""/>
+    <preference name="APP_HOST" default=""/>
     
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
@@ -24,17 +23,16 @@
             <activity android:name="pt.nos.osatmospheretest.DeepLinksActivity"
                       android:exported="true"
                       android:launchMode="singleTask">
-                <intent-filter android:autoVerify="false">
+                <intent-filter>
                     <action android:name="android.intent.action.VIEW"/>
                     <category android:name="android.intent.category.DEFAULT"/>
                     <category android:name="android.intent.category.BROWSABLE"/>
-                    <data android:scheme="https" 
-                          android:host="$APP_DOMAIN_HOST" 
-                          android:pathPrefix="$APP_DOMAIN_PATH"/>
+                    <data android:scheme="$APP_SCHEME" 
+                          android:host="$APP_HOST"/>
                 </intent-filter>
             </activity>
         </config-file>
-        
+
         <source-file src="src/android/DeepLinksActivity.java" target-dir="src/pt/nos/osatmospheretest" />
     </platform>
 </plugin>
