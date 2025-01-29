@@ -9,86 +9,53 @@ import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DeepLinksActivity extends CordovaPlugin {
     private static final String TAG = "DeepLinksActivity";
-    private String assetLinksJson;
+    private static String lastDeepLink = null; 
+    private CallbackContext callbackContext;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-
-        // Carrega o JSON da preferência configurada no plugin.xml
-        this.assetLinksJson = preferences.getString("ASSET_LINKS_JSON", "{}");
-        Log.d(TAG, "DeepLinksActivity initialized with assetLinksJson: " + this.assetLinksJson);
-
-        // Valida se o JSON foi carregado corretamente
-        if (this.assetLinksJson.equals("{}")) {
-            Log.e(TAG, "Asset Links JSON is not configured or invalid.");
-        }
+        Log.d(TAG, "DeepLinksActivity initialized");
+        Intent intent = cordova.getActivity().getIntent();
+        handleDeepLink(intent);
     }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals("handleDeepLink")) {
-            handleDeepLink(cordova.getActivity().getIntent(), callbackContext);
+        this.callbackContext = callbackContext;
+
+        if (action.equals("getDeepLink")) {
+            if (lastDeepLink != null) {
+                callbackContext.success(lastDeepLink);
+                lastDeepLink = null; 
+            } else {
+                callbackContext.error("No deep link received");
+            }
             return true;
         }
         return false;
     }
 
-    private void handleDeepLink(Intent intent, CallbackContext callbackContext) {
-        Log.d(TAG, "Handling deep link. Intent: " + intent.toString());
-
-        if (intent.getAction() != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
+    private void handleDeepLink(Intent intent) {
+        if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
-            if (uri != null) {
-                String uriString = uri.toString();
-                Log.d(TAG, "Deep link URI: " + uriString);
 
-                // Valida o deep link com base no JSON carregado
-                if (isDeepLinkValid(uriString)) {
-                    Log.d(TAG, "Deep link is valid.");
-                    webView.loadUrl("javascript:window.handleDeepLink('" + uriString + "');");
-                    if (callbackContext != null) {
-                        callbackContext.success(uriString);
-                    }
-                } else {
-                    Log.e(TAG, "Deep link is invalid.");
-                    if (callbackContext != null) {
-                        callbackContext.error("Deep link is invalid.");
-                    }
+            if (uri != null) {
+                lastDeepLink = uri.toString();
+                Log.d(TAG, "Received deep link: " + lastDeepLink);
+
+                if (webView != null) {
+                    final String js = "window.handleDeepLink && window.handleDeepLink('" + lastDeepLink + "');";
+                    cordova.getActivity().runOnUiThread(() -> webView.loadUrl("javascript:" + js));
                 }
             } else {
-                Log.e(TAG, "Deep link URI is null.");
-                if (callbackContext != null) {
-                    callbackContext.error("Deep link URI is null.");
-                }
+                Log.e(TAG, "Deep link URI is null");
             }
         } else {
-            Log.e(TAG, "Intent is not a VIEW intent.");
-            if (callbackContext != null) {
-                callbackContext.error("Not a VIEW intent.");
-            }
-        }
-    }
-
-    private boolean isDeepLinkValid(String uri) {
-        try {
-            // Converte o JSON da preferência em um objeto JSON
-            JSONObject jsonObject = new JSONObject(this.assetLinksJson);
-            JSONObject target = jsonObject.getJSONObject("target");
-
-            // Extrai o host e o prefixo esperado do JSON
-            String expectedHost = target.getString("namespace"); // Exemplo: "OSTESTAPP"
-            String expectedPathPrefix = preferences.getString("APP_DOMAIN_PATH", "/");
-
-            // Verifica se o URI contém o host e o prefixo esperado
-            return uri.contains(expectedHost) && uri.contains(expectedPathPrefix);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing Asset Links JSON.", e);
-            return false;
+            Log.e(TAG, "Intent is not a VIEW intent");
         }
     }
 
@@ -96,6 +63,6 @@ public class DeepLinksActivity extends CordovaPlugin {
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d(TAG, "onNewIntent called");
-        handleDeepLink(intent, null);
+        handleDeepLink(intent);
     }
 }
