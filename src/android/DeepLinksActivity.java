@@ -8,6 +8,8 @@ import org.apache.cordova.PluginResult;
 import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONException;
+import android.os.Bundle;
+
 
 public class DeepLinksActivity extends CordovaActivity { // Mudança para CordovaActivity
     private static final String TAG = "DeepLinksActivity";
