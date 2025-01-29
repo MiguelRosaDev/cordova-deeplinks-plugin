@@ -3,30 +3,34 @@ package pt.nos.osatmospheretest;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
-import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaActivity;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class DeepLinksActivity extends CordovaPlugin {
+public class DeepLinksActivity extends CordovaActivity { 
     private static final String TAG = "DeepLinksActivity";
     private static String lastDeepLink = null;
-    private static CallbackContext persistentCallback = null; // Armazena o callback
+    private static CallbackContext persistentCallback = null;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        handleDeepLink(getIntent()); 
+    }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("getDeepLink")) {
-            persistentCallback = callbackContext; // Guarda o callback para chamadas futuras
+            persistentCallback = callbackContext;
 
             if (lastDeepLink != null) {
                 sendDeepLinkToWebView(lastDeepLink);
                 lastDeepLink = null;
             } else {
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
-                pluginResult.setKeepCallback(true); // Mantém o callback ativo para futuros deep links
+                pluginResult.setKeepCallback(true);
                 callbackContext.sendPluginResult(pluginResult);
             }
             return true;
@@ -43,7 +47,7 @@ public class DeepLinksActivity extends CordovaPlugin {
 
                 if (persistentCallback != null) {
                     sendDeepLinkToWebView(lastDeepLink);
-                    lastDeepLink = null; // Reseta para evitar chamadas duplicadas
+                    lastDeepLink = null;
                 }
             }
         }
@@ -52,7 +56,7 @@ public class DeepLinksActivity extends CordovaPlugin {
     private void sendDeepLinkToWebView(String deepLink) {
         if (persistentCallback != null) {
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, deepLink);
-            pluginResult.setKeepCallback(true); // Mantém o callback ativo para futuros deep links
+            pluginResult.setKeepCallback(true);
             persistentCallback.sendPluginResult(pluginResult);
         }
     }
