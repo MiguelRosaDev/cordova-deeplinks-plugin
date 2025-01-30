@@ -1,7 +1,7 @@
 var exec = require('cordova/exec');
 
 var DeeplinksPlugin = {
-    updateWidget: function(successCallback, errorCallback) {
+    getDeepLink: function(successCallback, errorCallback) {
         exec(successCallback, errorCallback, "DeeplinksPlugin", "getDeepLink", []);
     }
 };
