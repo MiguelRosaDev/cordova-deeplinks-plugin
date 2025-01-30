@@ -15,6 +15,14 @@ public class DeepLinksActivity extends CordovaPlugin {
     private static String lastDeepLink = null;
 
     @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+        // Handle the intent that started the activity (if any)
+        Intent intent = cordova.getActivity().getIntent();
+        handleDeepLink(intent);
+    }
+    
+    @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("getDeepLink")) {
             persistentCallback = callbackContext;
