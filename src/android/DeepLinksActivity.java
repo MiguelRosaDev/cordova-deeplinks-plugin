@@ -27,15 +27,17 @@ public class DeepLinksActivity extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("getDeepLink")) {
+            Log.d(TAG, "Execute received getDeepLink action");
             persistentCallback = callbackContext;
 
             if (lastDeepLink != null) {
                 sendDeepLinkToWebView(lastDeepLink);
+                Log.d(TAG, "Execute received getDeepLink action - sendDeepLinkToWebView");
                 lastDeepLink = null;
             } else {
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
-                pluginResult.setKeepCallback(true);
-                callbackContext.sendPluginResult(pluginResult);
+                Log.d(TAG, "Execute received getDeepLink action - handleDeepLink");
+                Intent intent = cordova.getActivity().getIntent();
+                handleDeepLink(intent);
             }
             return true;
         }
@@ -58,6 +60,7 @@ public class DeepLinksActivity extends CordovaPlugin {
     }
 
     private void sendDeepLinkToWebView(String deepLink) {
+        Log.d(TAG, "sendDeepLinkToWebView");
         if (persistentCallback != null) {
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, deepLink);
             pluginResult.setKeepCallback(true);
