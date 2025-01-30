@@ -10,6 +10,10 @@
 
     <preference name="APP_SCHEME" default=""/>
     <preference name="APP_HOST" default=""/>
+
+    <js-module src="www/deeplink.js" name="deeplink">
+        <clobbers target="cordova.plugins.DeeplinksPlugin" />
+    </js-module>
     
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
@@ -18,7 +22,7 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
-        
+
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity android:name="pt.nos.osatmospheretest.DeepLinksActivity"
                       android:exported="true"
