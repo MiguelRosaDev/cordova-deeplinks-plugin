@@ -45,6 +45,8 @@ public class DeepLinksActivity extends CordovaPlugin {
     }
 
     private void handleDeepLink(Intent intent) {
+        String dataString = intent.getDataString();
+        Log.d(TAG, "Intent data string: " + (dataString != null ? dataString : "null"));
         if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
             if (uri != null) {
