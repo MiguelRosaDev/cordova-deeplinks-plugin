@@ -10,6 +10,10 @@
 
     <preference name="APP_SCHEME" default=""/>
     <preference name="APP_HOST" default=""/>
+
+    <js-module src="www/deeplink.js" name="deeplink">
+        <clobbers target="cordova.plugins.deeplinkplugin" />
+    </js-module>
     
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
