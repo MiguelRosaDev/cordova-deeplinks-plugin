@@ -23,7 +23,6 @@
             </feature>
         </config-file>
 
-        <!--
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity android:name="pt.nos.osatmospheretest.DeepLinksActivity"
                       android:exported="true"
@@ -36,15 +35,6 @@
                           android:host="$APP_HOST"/>
                 </intent-filter>
             </activity>
-        </config-file>
-        -->
-        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="$APP_HOST" android:pathPrefix="/" android:scheme="$APP_SCHEME"/>
-            </intent-filter>
         </config-file>
 
         <source-file src="src/android/DeepLinksActivity.java" target-dir="src/pt/nos/osatmospheretest" />
