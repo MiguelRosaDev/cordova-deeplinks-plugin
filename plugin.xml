@@ -12,7 +12,7 @@
     <preference name="APP_HOST" default=""/>
 
     <js-module src="www/deeplink.js" name="deeplink">
-        <clobbers target="cordova.plugins.deeplinkplugin" />
+        <clobbers target="cordova.plugins.DeeplinksPlugin" />
     </js-module>
     
     <platform name="android">
