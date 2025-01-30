@@ -6,4 +6,4 @@ var DeeplinkPlugin = {
     }
 };
 
-module.exports = DeeplinkPlugin;
+module.exports = DeeplinksPlugin;
