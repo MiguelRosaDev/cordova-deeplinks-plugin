@@ -23,7 +23,7 @@
             </feature>
         </config-file>
 
-    <config-file target="AndroidManifest.xml" parent="/manifest/application/activity[@android:name='pt.nos.osatmospheretest.MainActivity']">
+    <config-file target="AndroidManifest.xml" parent="/manifest/application">
         <intent-filter android:autoVerify="true">
             <action android:name="android.intent.action.VIEW"/>
             <category android:name="android.intent.category.DEFAULT"/>
