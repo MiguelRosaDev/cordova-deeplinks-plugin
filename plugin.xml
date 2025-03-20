@@ -23,15 +23,15 @@
             </feature>
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity[@android:name="MainActivity"]">
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="$APP_SCHEME" 
-                      android:host="$APP_HOST"/>
-            </intent-filter>
-        </config-file>
+    <config-file target="AndroidManifest.xml" parent="/manifest/application/activity[@android:name='.MainActivity']">
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="$APP_SCHEME" 
+                  android:host="$APP_HOST"/>
+        </intent-filter>
+    </config-file>
 
         <source-file src="src/android/DeepLinksActivity.java" target-dir="src/pt/nos/osatmospheretest" />
     </platform>
