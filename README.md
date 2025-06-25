@@ -110,7 +110,7 @@ Also handles universal link routing inside the `AppDelegate`.
 ## 🧪 Example Test Link
 
 ```
-https://<your app host>/some page
+https://<your app host>/<your app path pattern>/some page
 ```
 
 ---
