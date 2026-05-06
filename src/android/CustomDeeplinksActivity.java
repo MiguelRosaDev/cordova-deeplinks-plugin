@@ -1,13 +1,13 @@
 package com.cordova.deeplinks.plugin;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.content.Context;
 
-import com.appsflyer.AppsFlyerLib;
+import java.lang.reflect.Method;
 
 public class CustomDeeplinksActivity extends Activity {
 
@@ -18,9 +18,8 @@ public class CustomDeeplinksActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         try {
-            /*
             Intent incomingIntent = getIntent();
-            Uri data = incomingIntent.getData();
+            Uri data = incomingIntent != null ? incomingIntent.getData() : null;
 
             if (data != null) {
                 Log.d(TAG, "Received deep link: " + data.toString());
@@ -28,53 +27,52 @@ public class CustomDeeplinksActivity extends Activity {
                 Log.w(TAG, "Received intent with no data");
             }
 
+            boolean hasAppsFlyer = notifyAppsFlyerIfPresent(incomingIntent);
+
             Context context = this;
             String packageName = context.getPackageName();
             Class<?> mainActivityClass = Class.forName(packageName + ".MainActivity");
-
-            // Send deeplink to MainActivity
             Intent launchIntent = new Intent(this, mainActivityClass);
-            launchIntent.setAction(Intent.ACTION_MAIN);
-            launchIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-            if (data != null) {
-                launchIntent.putExtra("deeplink_url", data.toString());
-            }
-            launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            startActivity(launchIntent);
-            */
-            Intent incomingIntent = getIntent();
-            Uri data = incomingIntent.getData();
-            Log.d(TAG, "Received deep link: " + data.toString());
-        
-            if (incomingIntent != null) {
-                com.appsflyer.AppsFlyerLib.getInstance().performOnDeepLinking(incomingIntent, this);
-            }
-        
-            String packageName = getPackageName();
-            Class<?> mainActivityClass = Class.forName(packageName + ".MainActivity");
-        
-            Intent launchIntent = new Intent(this, mainActivityClass);
-            
-            if (incomingIntent != null) {
+            if (hasAppsFlyer && incomingIntent != null) {
                 launchIntent.setAction(incomingIntent.getAction());
                 launchIntent.setData(incomingIntent.getData());
-                
                 if (incomingIntent.getExtras() != null) {
                     launchIntent.putExtras(incomingIntent.getExtras());
                 }
+            } else {
+                launchIntent.setAction(Intent.ACTION_MAIN);
+                launchIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             }
-        
+
             launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
             if (data != null) {
                 launchIntent.putExtra("deeplink_url", data.toString());
             }
-        
+
             startActivity(launchIntent);
         } catch (Exception e) {
             Log.e(TAG, "Error handling deep link intent", e);
         } finally {
-            finish(); 
+            finish();
+        }
+    }
+
+    private boolean notifyAppsFlyerIfPresent(Intent intent) {
+        if (intent == null) return false;
+        try {
+            Class<?> cls = Class.forName("com.appsflyer.AppsFlyerLib");
+            Method getInstance = cls.getMethod("getInstance");
+            Object af = getInstance.invoke(null);
+            Method perform = cls.getMethod("performOnDeepLinking", Intent.class, Context.class);
+            perform.invoke(af, intent, this);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        } catch (Throwable t) {
+            Log.w(TAG, "AppsFlyer present but performOnDeepLinking failed", t);
+            return true;
         }
     }
 }
