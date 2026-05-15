@@ -3,7 +3,7 @@
 
 @implementation AppDelegate (CustomDeeplinksPlugin)
 
-- (void)notifyAppsFlyerWithUserActivity:(NSUserActivity *)userActivity {
+- (void)notifyAppsFlyerWithUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
     Class appsFlyerClass = NSClassFromString(@"AppsFlyerLib");
     if (!appsFlyerClass) return;
 
@@ -23,48 +23,22 @@
     #pragma clang diagnostic pop
 
     if (devKey && devKey.length > 0) {
-        // WARM START: AppsFlyer já inicializado
+        // WARM START: AppsFlyer já inicializado, envia imediatamente
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        [sharedLib performSelector:continueSelector withObject:userActivity withObject:nil];
+        [sharedLib performSelector:continueSelector withObject:userActivity withObject:restorationHandler];
         #pragma clang diagnostic pop
         NSLog(@"[CustomDeeplinks] Warm Start: Universal Link forwarded to AppsFlyer immediately");
     } else {
-        // COLD START: Aguarda que o OutSystems inicialize o AppsFlyer via JS
-        NSLog(@"[CustomDeeplinks] Cold Start: AppsFlyer not ready. Queuing Universal Link...");
+        // COLD START: Aguarda 2.5 segundos para o OutSystems correr o JS e inicializar o AppsFlyer
+        NSLog(@"[CustomDeeplinks] Cold Start: Waiting 2.5s for AppsFlyer JS initialization...");
         
-        // Captura o URL string antes de entrar na thread para evitar que o iOS o invalide
-        NSString *urlString = userActivity.webpageURL.absoluteString;
-        if (!urlString) return;
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            int attempts = 0;
-            while (attempts < 30) { // Aguarda até 15 segundos (30 * 0.5s)
-                [NSThread sleepForTimeInterval:0.5];
-                
-                __block BOOL ready = NO;
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    #pragma clang diagnostic push
-                    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-                    NSString *currentKey = [sharedLib respondsToSelector:devKeySelector] ? [sharedLib performSelector:devKeySelector] : nil;
-                    #pragma clang diagnostic pop
-                    
-                    if (currentKey && currentKey.length > 0) {
-                        ready = YES;
-                        NSUserActivity *clonedActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-                        clonedActivity.webpageURL = [NSURL URLWithString:urlString];
-                        
-                        #pragma clang diagnostic push
-                        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-                        [sharedLib performSelector:continueSelector withObject:clonedActivity withObject:nil];
-                        #pragma clang diagnostic pop
-                        NSLog(@"[CustomDeeplinks] Cold Start: AppsFlyer ready! Universal Link forwarded.");
-                    }
-                });
-                
-                if (ready) break;
-                attempts++;
-            }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            [sharedLib performSelector:continueSelector withObject:userActivity withObject:restorationHandler];
+            #pragma clang diagnostic pop
+            NSLog(@"[CustomDeeplinks] Cold Start: Delayed Universal Link forwarded to AppsFlyer");
         });
     }
 }
@@ -74,7 +48,7 @@
     if (!appsFlyerClass) return;
 
     SEL sharedSelector = NSSelectorFromString(@"shared");
-    if (![appsFlyerClass respondsToSelector:sharedSelector]) return; // CORREÇÃO: appsFlyerClass corrigido aqui
+    if (![appsFlyerClass respondsToSelector:sharedSelector]) return;
     
     id sharedLib = [appsFlyerClass performSelector:sharedSelector];
     if (!sharedLib) return;
@@ -89,41 +63,22 @@
     #pragma clang diagnostic pop
 
     if (devKey && devKey.length > 0) {
-        // WARM START
+        // WARM START: Envia imediatamente
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [sharedLib performSelector:openURLSelector withObject:url withObject:options];
         #pragma clang diagnostic pop
         NSLog(@"[CustomDeeplinks] Warm Start: URL Scheme forwarded to AppsFlyer immediately");
     } else {
-        // COLD START
-        NSLog(@"[CustomDeeplinks] Cold Start: AppsFlyer not ready. Queuing URL Scheme...");
+        // COLD START: Aguarda 2.5 segundos
+        NSLog(@"[CustomDeeplinks] Cold Start: Waiting 2.5s for AppsFlyer JS initialization...");
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            int attempts = 0;
-            while (attempts < 30) {
-                [NSThread sleepForTimeInterval:0.5];
-                
-                __block BOOL ready = NO;
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    #pragma clang diagnostic push
-                    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-                    NSString *currentKey = [sharedLib respondsToSelector:devKeySelector] ? [sharedLib performSelector:devKeySelector] : nil;
-                    #pragma clang diagnostic pop
-                    
-                    if (currentKey && currentKey.length > 0) {
-                        ready = YES;
-                        #pragma clang diagnostic push
-                        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-                        [sharedLib performSelector:openURLSelector withObject:url withObject:options];
-                        #pragma clang diagnostic pop
-                        NSLog(@"[CustomDeeplinks] Cold Start: AppsFlyer ready! URL Scheme forwarded.");
-                    }
-                });
-                
-                if (ready) break;
-                attempts++;
-            }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            [sharedLib performSelector:openURLSelector withObject:url withObject:options];
+            #pragma clang diagnostic pop
+            NSLog(@"[CustomDeeplinks] Cold Start: Delayed URL Scheme forwarded to AppsFlyer");
         });
     }
 }
@@ -140,7 +95,8 @@ restorationHandler:(void (^)(NSArray *))restorationHandler {
         return NO;
     }
 
-    [self notifyAppsFlyerWithUserActivity:userActivity];
+    // Encaminha de forma segura para o AppsFlyer (trata Warm e Cold Start internamente)
+    [self notifyAppsFlyerWithUserActivity:userActivity restorationHandler:restorationHandler];
 
     CustomDeeplinksPlugin *plugin = [self.viewController getCommandInstance:@"CustomDeeplinks"];
     if (plugin == nil) {
@@ -163,6 +119,7 @@ restorationHandler:(void (^)(NSArray *))restorationHandler {
 
     NSLog(@"[CustomDeeplinks] App opened via URL scheme: %@", url.absoluteString);
 
+    // Encaminha de forma segura para o AppsFlyer (trata Warm e Cold Start internamente)
     [self notifyAppsFlyerWithURL:url options:options];
 
     return YES;
