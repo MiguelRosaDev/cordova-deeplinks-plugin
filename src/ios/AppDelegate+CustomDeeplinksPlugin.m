@@ -3,7 +3,47 @@
 
 @implementation AppDelegate (CustomDeeplinksPlugin)
 
-// Universal Link handler
+// 1. Método novo para encaminhar Universal Links (onelink.me) para o AppsFlyer
+- (void)notifyAppsFlyerWithUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
+    Class appsFlyerClass = NSClassFromString(@"AppsFlyerLib");
+    if (appsFlyerClass) {
+        SEL sharedSelector = NSSelectorFromString(@"shared");
+        if ([appsFlyerClass respondsToSelector:sharedSelector]) {
+            id sharedLib = [appsFlyerClass performSelector:sharedSelector];
+            SEL continueSelector = NSSelectorFromString(@"continueUserActivity:restorationHandler:");
+            
+            if (sharedLib && [sharedLib respondsToSelector:continueSelector]) {
+                #pragma clang diagnostic push
+                #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+                [sharedLib performSelector:continueSelector withObject:userActivity withObject:restorationHandler];
+                #pragma clang diagnostic pop
+                NSLog(@"[CustomDeeplinks] Successfully forwarded Universal Link to AppsFlyer");
+            }
+        }
+    }
+}
+
+// 2. Método novo para encaminhar URL Schemes tradicionais para o AppsFlyer
+- (void)notifyAppsFlyerWithURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    Class appsFlyerClass = NSClassFromString(@"AppsFlyerLib");
+    if (appsFlyerClass) {
+        SEL sharedSelector = NSSelectorFromString(@"shared");
+        if ([appsFlyerClass respondsToSelector:sharedSelector]) {
+            id sharedLib = [appsFlyerClass performSelector:sharedSelector];
+            SEL openURLSelector = NSSelectorFromString(@"handleOpenURL:options:");
+            
+            if (sharedLib && [sharedLib respondsToSelector:openURLSelector]) {
+                #pragma clang diagnostic push
+                #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+                [sharedLib performSelector:openURLSelector withObject:url withObject:options];
+                #pragma clang diagnostic pop
+                NSLog(@"[CustomDeeplinks] Successfully forwarded URL Scheme to AppsFlyer");
+            }
+        }
+    }
+}
+
+// 3. Modificado: Interceta o Universal Link e avisa o AppsFlyer primeiro
 - (BOOL)application:(UIApplication *)application 
 continueUserActivity:(NSUserActivity *)userActivity 
 restorationHandler:(void (^)(NSArray *))restorationHandler {
@@ -14,6 +54,9 @@ restorationHandler:(void (^)(NSArray *))restorationHandler {
         NSLog(@"[CustomDeeplinks] Invalid URL");
         return NO;
     }
+
+    // Change: Notify Appsflyer
+    [self notifyAppsFlyerWithUserActivity:userActivity restorationHandler:restorationHandler];
 
     CustomDeeplinksPlugin *plugin = [self.viewController getCommandInstance:@"CustomDeeplinks"];
     if (plugin == nil) {
@@ -29,12 +72,15 @@ restorationHandler:(void (^)(NSArray *))restorationHandler {
     return handled;
 }
 
-// Deep link (URL scheme) handler
+// 4. Modificado: Interceta o URL Scheme e avisa o AppsFlyer primeiro
 - (BOOL)application:(UIApplication *)app 
             openURL:(NSURL *)url 
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
     NSLog(@"[CustomDeeplinks] App opened via URL scheme: %@", url.absoluteString);
+
+    // ALTERAÇÃO: Notifica o AppsFlyer antes de terminar a execução
+    [self notifyAppsFlyerWithURL:url options:options];
 
     return YES;
 }
