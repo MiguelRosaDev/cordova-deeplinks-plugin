@@ -33,7 +33,9 @@
         // COLD START: Aguarda que o OutSystems inicialize o AppsFlyer via JS
         NSLog(@"[CustomDeeplinks] Cold Start: AppsFlyer not ready. Queuing Universal Link...");
         
+        // Captura o URL string antes de entrar na thread para evitar que o iOS o invalide
         NSString *urlString = userActivity.webpageURL.absoluteString;
+        if (!urlString) return;
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             int attempts = 0;
@@ -49,7 +51,6 @@
                     
                     if (currentKey && currentKey.length > 0) {
                         ready = YES;
-                        // Cria uma atividade nova e limpa para evitar expiração do objeto pelo iOS
                         NSUserActivity *clonedActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
                         clonedActivity.webpageURL = [NSURL URLWithString:urlString];
                         
@@ -73,7 +74,7 @@
     if (!appsFlyerClass) return;
 
     SEL sharedSelector = NSSelectorFromString(@"shared");
-    if (![appsFlyClass respondsToSelector:sharedSelector]) return;
+    if (![appsFlyerClass respondsToSelector:sharedSelector]) return; // CORREÇÃO: appsFlyerClass corrigido aqui
     
     id sharedLib = [appsFlyerClass performSelector:sharedSelector];
     if (!sharedLib) return;
@@ -139,7 +140,6 @@ restorationHandler:(void (^)(NSArray *))restorationHandler {
         return NO;
     }
 
-    // Encaminha de forma segura (Warm ou Cold start)
     [self notifyAppsFlyerWithUserActivity:userActivity];
 
     CustomDeeplinksPlugin *plugin = [self.viewController getCommandInstance:@"CustomDeeplinks"];
@@ -163,7 +163,6 @@ restorationHandler:(void (^)(NSArray *))restorationHandler {
 
     NSLog(@"[CustomDeeplinks] App opened via URL scheme: %@", url.absoluteString);
 
-    // Encaminha de forma segura (Warm ou Cold start)
     [self notifyAppsFlyerWithURL:url options:options];
 
     return YES;
