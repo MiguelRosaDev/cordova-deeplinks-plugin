@@ -3,7 +3,6 @@
 
 @implementation AppDelegate (CustomDeeplinksPlugin)
 
-// 1. Método novo para encaminhar Universal Links (onelink.me) para o AppsFlyer
 - (void)notifyAppsFlyerWithUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
     Class appsFlyerClass = NSClassFromString(@"AppsFlyerLib");
     if (appsFlyerClass) {
@@ -23,7 +22,6 @@
     }
 }
 
-// 2. Método novo para encaminhar URL Schemes tradicionais para o AppsFlyer
 - (void)notifyAppsFlyerWithURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
     Class appsFlyerClass = NSClassFromString(@"AppsFlyerLib");
     if (appsFlyerClass) {
@@ -43,7 +41,6 @@
     }
 }
 
-// 3. Modificado: Interceta o Universal Link e avisa o AppsFlyer primeiro
 - (BOOL)application:(UIApplication *)application 
 continueUserActivity:(NSUserActivity *)userActivity 
 restorationHandler:(void (^)(NSArray *))restorationHandler {
@@ -72,7 +69,6 @@ restorationHandler:(void (^)(NSArray *))restorationHandler {
     return handled;
 }
 
-// 4. Modificado: Interceta o URL Scheme e avisa o AppsFlyer primeiro
 - (BOOL)application:(UIApplication *)app 
             openURL:(NSURL *)url 
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
