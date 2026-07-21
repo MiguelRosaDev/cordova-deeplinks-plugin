@@ -13,7 +13,7 @@ module.exports = function (context) {
 
   var app_domain_name = configParser.getGlobalPreference("APP_HOST");
   var app_domain_branded_name =
-    configParser.setGlobalPreference("APP_BRANDED");
+    configParser.getGlobalPreference("APP_BRANDED");
 
   //ANDROID
   //go inside the AndroidManifest and change value for APP_DOMAIN_NAME

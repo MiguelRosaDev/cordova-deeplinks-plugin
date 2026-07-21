@@ -1,4 +1,4 @@
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.cordova.deeplinks.plugin" version="1.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.cordova.deeplinks.plugin" version="1.6">
 	<name>CustomDeeplinksPlugin</name>
 	<engines>
 		<engine name="cordova" version=">=9.0.0"/>
