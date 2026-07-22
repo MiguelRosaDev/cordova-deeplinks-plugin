@@ -40,6 +40,7 @@
 		<source-file src="src/android/CustomDeeplinksActivity.java" target-dir="src/com/cordova/deeplinks/plugin"/>
 	</platform>
 	<platform name="ios">
+		<hook type="after_prepare" src="hooks/iosCleanEntitlements.js"/>
 		<config-file target="config.xml" parent="/*">
 			<feature name="CustomDeeplinks">
 				<param name="ios-package" value="CustomDeeplinksPlugin"/>
